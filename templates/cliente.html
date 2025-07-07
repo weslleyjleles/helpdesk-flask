@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Painel do Cliente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
+    <style>
+      body {
+        background-image: url("{{ url_for('static', filename='img/fundo4.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+
+      .painel-container {
+        background-color: rgba(255, 255, 255, 0.94);
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        margin-top: 30px;
+        margin-bottom: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container painel-container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Painel do Cliente</h2>
+        <a href="{{ url_for('logout') }}" class="btn btn-outline-danger"
+          >Sair</a
+        >
+      </div>
+
+      <p><strong>Usuário logado:</strong> {{ usuario }}</p>
+
+      <!-- Formulário para abrir chamado -->
+      <div class="card mb-4">
+        <div class="card-header bg-primary text-white">Abrir novo chamado</div>
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label class="form-label">Título</label>
+              <input type="text" name="titulo" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Descrição</label>
+              <textarea
+                name="descricao"
+                class="form-control"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Setor</label>
+              <select name="setor" class="form-select" required>
+                <option value="" disabled selected>Selecione</option>
+                <option value="TI">TI</option>
+                <option value="RH">RH</option>
+                <option value="Financeiro">Financeiro</option>
+                <option value="Contabilidade">Contabilidade</option>
+                <option value="Expedicao">Expedicao</option>
+                <option value="Logistica">Logistica</option>
+                <option value="DP">DP</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Anexo (opcional)</label>
+              <input type="file" name="imagem" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-success">
+              Enviar Chamado
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Lista de chamados -->
+      <div class="card">
+        <div class="card-header bg-secondary text-white">Meus Chamados</div>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Setor</th>
+                <th>Data</th>
+                <th>Status</th>
+                <th>Anexo</th>
+                <th>Resposta</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for chamado in chamados %}
+              <tr>
+                <td>{{ chamado.id }}</td>
+                <td>{{ chamado.titulo }}</td>
+                <td>{{ chamado.setor }}</td>
+                <td>{{ chamado.data }}</td>
+                <td>
+                  {% if chamado.status == 'Aberto' %}
+                  <span class="badge bg-success">Aberto</span>
+                  {% elif chamado.status == 'Fechado' %}
+                  <span class="badge bg-danger">Fechado</span>
+                  {% else %}
+                  <span class="badge bg-secondary">{{ chamado.status }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if chamado.anexo %}
+                  <a
+                    href="{{ url_for('uploaded_file', filename=chamado.anexo|urlencode) }}"
+                    target="_blank"
+                    class="btn btn-sm btn-outline-primary"
+                    >Ver</a
+                  >
+                  {% else %}
+                  <span class="text-muted">-</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if chamado.resposta %}
+                  <span title="{{ chamado.resposta }}" data-bs-toggle="tooltip">
+                    {{ chamado.resposta[:50] }}{% if chamado.resposta|length >
+                    50 %}...{% endif %}
+                  </span>
+                  {% else %}
+                  <em class="text-muted">Sem resposta</em>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const tooltips = document.querySelectorAll(
+          '[data-bs-toggle="tooltip"]'
+        );
+        tooltips.forEach((t) => new bootstrap.Tooltip(t));
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gerenciar Usuários</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      defer
+    ></script>
+
+    <style>
+      body {
+        background-image: url("{{ url_for('static', filename='img/fundo.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+      }
+
+      .banner {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        margin-top: 30px;
+      }
+
+      .table th,
+      .table td {
+        vertical-align: middle;
+      }
+
+      .modal-content {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+      }
+
+      .btn-close {
+        background: transparent;
+      }
+
+      .btn-sm {
+        min-width: 80px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="banner">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="fw-bold">Gerenciar Usuários</h3>
+          <div class="d-flex gap-2">
+            <a href="{{ url_for('painel_admin') }}" class="btn btn-secondary"
+              >← Voltar</a
+            >
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger"
+              >Sair</a
+            >
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div
+          class="alert alert-{{ category }} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Fechar"
+          ></button>
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Lista de Usuários</h5>
+          <button
+            class="btn btn-success"
+            data-bs-toggle="modal"
+            data-bs-target="#modalCadastro"
+          >
+            + Novo Usuário
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Login</th>
+                <th>Tipo</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in usuarios %}
+              <tr>
+                <td>{{ u.login }}</td>
+                <td>{{ u.tipo|capitalize }}</td>
+                <td class="text-center">
+                  {% if u.login != usuario %}
+                  <form
+                    method="post"
+                    action="{{ url_for('excluir_usuario', login=u.login) }}"
+                    style="display: inline"
+                  >
+                    <button type="submit" class="btn btn-sm btn-danger">
+                      Excluir
+                    </button>
+                  </form>
+                  {% else %}
+                  <span class="text-muted">Você</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Cadastro -->
+    <div class="modal fade" id="modalCadastro" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <form method="post" action="{{ url_for('cadastrar_usuario') }}">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Cadastrar Novo Usuário</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Fechar"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">Login:</label>
+                <input type="text" name="login" class="form-control" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Senha:</label>
+                <input
+                  type="password"
+                  name="senha"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="mb-3" id="campo-setor" style="display: none">
+                <label class="form-label">Setor (para Admin):</label>
+                <input type="text" name="setor" class="form-control" />
+              </div>
+
+              <script>
+                document
+                  .querySelector('select[name="tipo"]')
+                  .addEventListener("change", function () {
+                    document.getElementById("campo-setor").style.display =
+                      this.value === "admin" ? "block" : "none";
+                  });
+              </script>
+
+              <div class="mb-3">
+                <label class="form-label">Tipo:</label>
+                <select name="tipo" class="form-select" required>
+                  <option value="cliente">Cliente</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-success" type="submit">Salvar</button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
