@@ -91,19 +91,25 @@
 
         {% if chamado.anexo %}
         <div class="mb-3">
-          <p><span class="label">Anexo:</span></p>
+          <p><span class="label">Anexo do Chamado:</span></p>
           <a
             href="{{ url_for('uploaded_file', filename=chamado.anexo|urlencode) }}"
             target="_blank"
             class="btn btn-outline-primary"
           >
-            Ver Anexo
+            Ver Anexo do Chamado
           </a>
         </div>
-        {% endif %} {% if chamado.resposta %}
+        {% endif %} {% if chamado.resposta_anexo %}
         <div class="mb-3">
-          <p><span class="label">Resposta do Administrador:</span></p>
-          <p class="content">{{ chamado.resposta }}</p>
+          <p><span class="label">Anexo da Resposta:</span></p>
+          <a
+            href="{{ url_for('uploaded_file', filename=chamado.resposta_anexo|urlencode) }}"
+            target="_blank"
+            class="btn btn-outline-success"
+          >
+            Ver Anexo da Resposta
+          </a>
         </div>
         {% endif %}
 
