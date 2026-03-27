@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -29,6 +29,14 @@
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         margin-top: 30px;
         margin-bottom: 30px;
+      }
+
+      .clickable-row {
+        cursor: pointer;
+      }
+
+      .clickable-row:hover {
+        background-color: #f0f0f0;
       }
     </style>
   </head>
@@ -67,13 +75,14 @@
               <label class="form-label">Setor</label>
               <select name="setor" class="form-select" required>
                 <option value="" disabled selected>Selecione</option>
-                <option value="TI">TI</option>
-                <option value="RH">RH</option>
-                <option value="Financeiro">Financeiro</option>
-                <option value="Contabilidade">Contabilidade</option>
-                <option value="Expedicao">Expedicao</option>
-                <option value="Logistica">Logistica</option>
-                <option value="DP">DP</option>
+                <option value="ti">TI</option>
+                <option value="rh">RH</option>
+                <option value="financeiro">Financeiro</option>
+                <option value="beneficio">Beneficio</option>
+                <option value="contabilidade">Contabilidade</option>
+                <option value="expedicao">Expedição</option>
+                <option value="logistica">Logística</option>
+                <option value="dp">Departamento Pessoal</option>
               </select>
             </div>
 
@@ -107,7 +116,10 @@
             </thead>
             <tbody>
               {% for chamado in chamados %}
-              <tr>
+              <tr
+                class="clickable-row"
+                data-url="{{ url_for('visualizar_chamado', id=chamado.id) }}"
+              >
                 <td>{{ chamado.id }}</td>
                 <td>{{ chamado.titulo }}</td>
                 <td>{{ chamado.setor }}</td>
@@ -154,9 +166,17 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const tooltips = document.querySelectorAll(
-          '[data-bs-toggle="tooltip"]'
+          '[data-bs-toggle="tooltip"]',
         );
         tooltips.forEach((t) => new bootstrap.Tooltip(t));
+
+        // Clique na linha redireciona
+        document.querySelectorAll(".clickable-row").forEach((row) => {
+          row.addEventListener("click", function () {
+            const url = this.getAttribute("data-url");
+            if (url) window.location.href = url;
+          });
+        });
       });
     </script>
   </body>
