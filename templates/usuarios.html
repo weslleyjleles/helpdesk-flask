@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -48,7 +48,6 @@
   <body>
     <div class="container">
       <div class="banner">
-        <!-- Cabeçalho -->
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="fw-bold">Gerenciar Usuários</h3>
           <div class="d-flex gap-2">
@@ -61,7 +60,6 @@
           </div>
         </div>
 
-        <!-- Mensagens -->
         {% with messages = get_flashed_messages(with_categories=true) %} {% if
         messages %} {% for category, message in messages %}
         <div
@@ -78,9 +76,8 @@
         </div>
         {% endfor %} {% endif %} {% endwith %}
 
-        <!-- Título e botão -->
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <h5 class="mb-0">Lista de Usuários</h5>
+          <h5 class="mb-0">Lista de Usuários Cadastrados</h5>
           <button
             class="btn btn-success"
             data-bs-toggle="modal"
@@ -90,12 +87,12 @@
           </button>
         </div>
 
-        <!-- Tabela -->
         <div class="table-responsive">
           <table class="table table-bordered table-hover">
             <thead class="table-light">
               <tr>
                 <th>Login</th>
+                <th>E-mail</th>
                 <th>Tipo</th>
                 <th class="text-center">Ações</th>
               </tr>
@@ -104,13 +101,23 @@
               {% for u in usuarios %}
               <tr>
                 <td>{{ u.login }}</td>
+                <td>
+                  {{ u.email if u.email else '<span class="text-danger small"
+                    >Sem E-mail</span
+                  >'|safe }}
+                </td>
                 <td>{{ u.tipo|capitalize }}</td>
                 <td class="text-center">
                   {% if u.login != usuario %}
                   <form
                     method="post"
-                    action="{{ url_for('excluir_usuario', login=u.login) }}"
+                    action="{{ url_for('excluir_usuario', login_user=u.login) }}"
                     style="display: inline"
+                    onsubmit="
+                      return confirm(
+                        'Tem certeza que deseja excluir este usuário?',
+                      );
+                    "
                   >
                     <button type="submit" class="btn btn-sm btn-danger">
                       Excluir
@@ -128,7 +135,6 @@
       </div>
     </div>
 
-    <!-- Modal de Cadastro -->
     <div class="modal fade" id="modalCadastro" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">
         <form method="post" action="{{ url_for('cadastrar_usuario') }}">
@@ -145,8 +151,29 @@
             <div class="modal-body">
               <div class="mb-3">
                 <label class="form-label">Login:</label>
-                <input type="text" name="login" class="form-control" required />
+                <input
+                  type="text"
+                  name="login"
+                  class="form-control"
+                  required
+                  placeholder="Ex: weslley"
+                />
               </div>
+
+              <div class="mb-3">
+                <label class="form-label">E-mail:</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  required
+                  placeholder="exemplo@ciadoterno.com.br"
+                />
+                <div class="form-text">
+                  Necessário para notificações de chamados.
+                </div>
+              </div>
+
               <div class="mb-3">
                 <label class="form-label">Senha:</label>
                 <input
@@ -156,25 +183,34 @@
                   required
                 />
               </div>
+
               <div class="mb-3">
-                <label class="form-label">Tipo:</label>
+                <label class="form-label">Tipo de Conta:</label>
                 <select
                   name="tipo"
                   class="form-select"
                   id="tipo-select"
                   required
                 >
-                  <option value="cliente">Cliente</option>
-                  <option value="admin">Administrador</option>
+                  <option value="cliente">Cliente (Usuário comum)</option>
+                  <option value="admin">Administrador (TI / Setores)</option>
                 </select>
               </div>
+
               <div class="mb-3" id="campo-setor" style="display: none">
-                <label class="form-label">Setor (para Admin):</label>
-                <input type="text" name="setor" class="form-control" />
+                <label class="form-label">Setor Responsável:</label>
+                <input
+                  type="text"
+                  name="setor"
+                  class="form-control"
+                  placeholder="Ex: TI, RH, Financeiro"
+                />
               </div>
             </div>
             <div class="modal-footer">
-              <button class="btn btn-success" type="submit">Salvar</button>
+              <button class="btn btn-success" type="submit">
+                Finalizar Cadastro
+              </button>
               <button
                 type="button"
                 class="btn btn-secondary"
@@ -194,12 +230,13 @@
         const campoSetor = document.getElementById("campo-setor");
 
         function toggleSetor() {
+          // Mostra o campo de setor apenas se o tipo for admin
           campoSetor.style.display =
             tipoSelect.value === "admin" ? "block" : "none";
         }
 
         tipoSelect.addEventListener("change", toggleSetor);
-        toggleSetor(); // Executa ao carregar
+        toggleSetor(); // Executa ao carregar para garantir o estado inicial correto
       });
     </script>
   </body>

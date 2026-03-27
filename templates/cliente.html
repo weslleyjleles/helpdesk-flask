@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
   <head>
     <meta charset="UTF-8" />
@@ -118,7 +118,7 @@
               {% for chamado in chamados %}
               <tr
                 class="clickable-row"
-                data-url="{{ url_for('visualizar_chamado_cliente', id=chamado.id) }}"
+                data-url="{{ url_for('visualizar_chamado', id=chamado.id) }}"
               >
                 <td>{{ chamado.id }}</td>
                 <td>{{ chamado.titulo }}</td>
@@ -166,7 +166,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const tooltips = document.querySelectorAll(
-          '[data-bs-toggle="tooltip"]'
+          '[data-bs-toggle="tooltip"]',
         );
         tooltips.forEach((t) => new bootstrap.Tooltip(t));
 

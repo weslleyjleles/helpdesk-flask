@@ -184,7 +184,7 @@
             {% for chamado in chamados %}
             <tr
               class="clickable-row {% if chamado.status == 'Fechado' %}table-secondary{% endif %}"
-              data-url="{{ url_for('visualizar_chamado', id=chamado.id) }}"
+              data-url="{{ url_for('visualizar_chamado', id=chamado['id']) }}"
               onclick="window.location.href = this.getAttribute('data-url');"
             >
               <td>{{ chamado.id }}</td>

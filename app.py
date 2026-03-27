@@ -1,31 +1,76 @@
 import os
+import uuid
+from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from werkzeug.utils import secure_filename
-from database import db
-from datetime import datetime
 from unidecode import unidecode
-from database.db import contar_chamados_por_status, chamados_por_mes
+
+# Importação das funções do banco de dados
+from database.db import (
+    validar_login_retorna_dados, salvar_chamado, carregar_chamados_cliente,
+    buscar_chamado_por_id, buscar_chamados_paginados, contar_total_chamados,
+    responder_chamado_com_anexo, fechar_chamado, consultar_usuarios_sql,
+    cadastrar_usuario_sql, excluir_usuario_sql, contar_chamados_por_status, 
+    chamados_por_mes, buscar_email_usuario, contar_chamados_por_setor
+)
+from util_email import enviar_email, montar_email_por_setor
+
+app = Flask(__name__)
+app.secret_key = "segredo_super_seguro" 
+UPLOAD_FOLDER = os.path.join('static', 'uploads')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# --- Funções Auxiliares ---
 
 def normalizar_setor(setor):
     return unidecode(setor.strip().lower()) if setor else None
 
-app = Flask(__name__)
-app.secret_key = "segredo"
-UPLOAD_FOLDER = os.path.join('static', 'uploads')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+def login_required(roles=None):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if 'usuario' not in session:
+                return redirect(url_for('login'))
+            
+            user_type = session['usuario'].get('tipo')
+            if roles and user_type not in roles:
+                flash('Acesso negado: área restrita.', 'danger')
+                return redirect(url_for('painel_cliente' if user_type == 'cliente' else 'painel_admin'))
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
-# === LOGIN ===
+def salvar_arquivo(arquivo, setor_raw):
+    if not arquivo or not arquivo.filename:
+        return None
+    ext = os.path.splitext(arquivo.filename)[1]
+    filename = secure_filename(f"{uuid.uuid4().hex}{ext}")
+    setor = normalizar_setor(setor_raw) or 'geral'
+    pasta_destino = os.path.join(app.config['UPLOAD_FOLDER'], setor)
+    os.makedirs(pasta_destino, exist_ok=True)
+    arquivo.save(os.path.join(pasta_destino, filename))
+    return f"{setor}/{filename}"
+
+# === ROTAS DE LOGIN E LOGOUT ===
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        usuario = request.form['usuario']
-        senha = request.form['senha']
-        usuario_data = db.validar_login_retorna_dados(usuario, senha)
+        usuario = request.form.get('usuario')
+        senha = request.form.get('senha')
+        usuario_data = validar_login_retorna_dados(usuario, senha)
+        
         if usuario_data:
-            session['usuario'] = usuario_data
-            return redirect(url_for('painel_cliente' if usuario_data['tipo'] == 'cliente' else 'painel_admin'))
-        else:
-            flash('Login inválido', 'danger')
+            session.permanent = True
+            session['usuario'] = {
+                'login': str(usuario_data['login']).strip(),
+                'tipo': usuario_data['tipo'],
+                'setor': usuario_data.get('setor')
+            }
+            destino = 'painel_cliente' if usuario_data['tipo'] == 'cliente' else 'painel_admin'
+            return redirect(url_for(destino))
+            
+        flash('Login ou senha inválidos', 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -33,196 +78,166 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
-# === PAINEL CLIENTE ===
+# === VISUALIZAÇÃO ===
+
+@app.route('/chamado/visualizar/<int:id>')
+@login_required(roles=['cliente', 'admin', 'superadmin'])
+def visualizar_chamado(id):
+    chamado = buscar_chamado_por_id(id)
+    if not chamado:
+        flash("Chamado não encontrado.", "danger")
+        return redirect(url_for('painel_cliente' if session['usuario']['tipo'] == 'cliente' else 'painel_admin'))
+    
+    # Validação de segurança para clientes não verem chamados de outros
+    if session['usuario']['tipo'] == 'cliente':
+        login_sessao = session['usuario']['login'].lower()
+        dono_chamado = chamado['usuario'].lower()
+        if login_sessao != dono_chamado:
+            flash("Você não tem permissão para visualizar este chamado.", "danger")
+            return redirect(url_for('painel_cliente'))
+
+    return render_template('visualizar_chamado.html', chamado=chamado)
+
+# === PAINÉIS ===
+
 @app.route('/cliente', methods=['GET', 'POST'])
+@login_required(roles=['cliente'])
 def painel_cliente():
-    if 'usuario' not in session or session['usuario']['tipo'] != 'cliente':
-        return redirect(url_for('login'))
-
     usuario = session['usuario']['login']
-
     if request.method == 'POST':
         titulo = request.form['titulo']
         descricao = request.form['descricao']
-        setor = normalizar_setor(request.form.get('setor'))
-        imagem = request.files.get('imagem')
-        imagem_path = None
-
-        if imagem and imagem.filename:
-            filename = secure_filename(imagem.filename)
-            pasta_setor = os.path.join(app.config['UPLOAD_FOLDER'], setor or 'geral')
-            os.makedirs(pasta_setor, exist_ok=True)
-            caminho = os.path.join(pasta_setor, filename)
-            imagem.save(caminho)
-            imagem_path = f"{setor}/{filename}" if setor else filename
-
-        db.salvar_chamado(titulo, setor, descricao, imagem_path, usuario)
-        flash('Chamado enviado com sucesso!', 'success')
+        setor = request.form.get('setor')
+        img_path = salvar_arquivo(request.files.get('imagem'), setor)
+        salvar_chamado(titulo, setor, descricao, img_path, usuario)
+        flash('Chamado aberto com sucesso!', 'success')
         return redirect(url_for('painel_cliente'))
 
-    chamados = db.carregar_chamados_cliente(usuario)
+    chamados = carregar_chamados_cliente(usuario)
     return render_template('cliente.html', usuario=usuario, chamados=chamados)
 
-@app.route('/cliente/ver/<int:id>')
-def visualizar_chamado_cliente(id):
-    if 'usuario' not in session or session['usuario']['tipo'] != 'cliente':
-        return redirect(url_for('login'))
-
-    usuario = session['usuario']['login']
-    chamado = db.buscar_chamado_por_id(id)
-
-    if not chamado or chamado["usuario"] != usuario:
-        flash('Chamado não encontrado ou acesso negado.', 'danger')
-        return redirect(url_for('painel_cliente'))
-
-    return render_template('detalhes_cliente.html', chamado=chamado)
-
-# === PAINEL ADMIN ===
-@app.route('/admin', methods=['GET'])
+@app.route('/admin')
+@login_required(roles=['admin', 'superadmin'])
 def painel_admin():
-    if 'usuario' not in session or session['usuario']['tipo'] not in ('admin', 'superadmin'):
-        return redirect(url_for('login'))
-
     tipo = session['usuario']['tipo']
-
-    # Obtem o setor da sessão e normaliza, com fallback para 'geral'
-    setor_raw = session['usuario'].get('setor')
-    setor_normalizado = normalizar_setor(setor_raw) if setor_raw else 'geral'
-
+    setor_user = session['usuario'].get('setor') or 'geral'
+    
     pagina = request.args.get('pagina', 1, type=int)
     status = request.args.get('status')
+    setor_filtro = request.args.get('setor') if tipo == 'superadmin' else setor_user
 
-    # Se for superadmin, pode usar filtro de setor da URL; senão, usa o setor do admin atual
-    setor_filtro = request.args.get('setor') if tipo == 'superadmin' else setor_normalizado
+    limite = 10
+    offset = (pagina - 1) * limite
+    chamados = buscar_chamados_paginados(offset, limite, status, setor_filtro)
+    total = contar_total_chamados(status, setor_filtro)
+    
+    return render_template('admin.html', 
+                           chamados=chamados, 
+                           total_paginas=(total + limite - 1) // limite,
+                           pagina=pagina,
+                           tipo=tipo)
 
-    por_pagina = 10
-    offset = (pagina - 1) * por_pagina
+@app.route('/admin/dashboard')
+@login_required(roles=['admin', 'superadmin'])
+def dashboard():
+    stats_status = contar_chamados_por_status() or {}
+    stats_setor = contar_chamados_por_setor() or {}
+    res_mes = chamados_por_mes()
+    
+    l_mes = res_mes[0] if (res_mes and len(res_mes) > 0) else []
+    v_mes = res_mes[1] if (res_mes and len(res_mes) > 1) else []
+    
+    return render_template('dashboard.html', 
+                           status_counts=stats_status, 
+                           setor_counts=stats_setor, 
+                           labels=l_mes,    
+                           valores=v_mes)   
 
-    chamados = db.buscar_chamados_paginados(offset=offset, limite=por_pagina, status=status, setor=setor_filtro)
-    total = db.contar_total_chamados(status=status, setor=setor_filtro)
-    total_paginas = (total + por_pagina - 1) // por_pagina
+@app.route('/admin/usuarios')
+@login_required(roles=['superadmin'])
+def listar_usuarios():
+    usuarios = consultar_usuarios_sql()
+    return render_template('usuarios.html', usuarios=usuarios, usuario=session['usuario']['login'])
 
-    return render_template(
-        'admin.html',
-        usuario=session['usuario']['login'],
-        tipo=tipo,
-        chamados=chamados,
-        pagina=pagina,
-        total_paginas=total_paginas,
-        status=status
+@app.route('/admin/cadastrar_usuario', methods=['POST'])
+@login_required(roles=['superadmin'])
+def cadastrar_usuario():
+    login_form = request.form.get('login')
+    senha_form = request.form.get('senha')
+    tipo_form = request.form.get('tipo')
+    setor_form = request.form.get('setor')
+    email_form = request.form.get('email')
+
+    sucesso, mensagem = cadastrar_usuario_sql(
+        usuario=login_form, senha_plana=senha_form, 
+        tipo=tipo_form, setor=setor_form, email=email_form
     )
+    flash(mensagem, 'success' if sucesso else 'danger')
+    return redirect(url_for('listar_usuarios'))
 
+@app.route('/admin/excluir_usuario/<login_user>', methods=['POST'])
+@login_required(roles=['superadmin'])
+def excluir_usuario(login_user):
+    sucesso, mensagem = excluir_usuario_sql(login_user)
+    flash(mensagem, 'success' if sucesso else 'danger')
+    return redirect(url_for('listar_usuarios'))
 
 @app.route('/responder/<int:id>', methods=['POST'])
+@login_required(roles=['admin', 'superadmin'])
 def responder_chamado_route(id):
-    if 'usuario' not in session or session['usuario']['tipo'] not in ('admin', 'superadmin'):
-        return redirect(url_for('login'))
-
     resposta = request.form['resposta']
-    anexo_file = request.files.get('anexoResposta')
-    anexo_path = None
+    anexo = salvar_arquivo(request.files.get('anexoResposta'), session['usuario'].get('setor'))
+    
+    # 1. Salva a resposta no banco
+    responder_chamado_com_anexo(id, resposta, anexo)
+    
+    # 2. Tenta enviar e-mail de notificação
+    try:
+        chamado = buscar_chamado_por_id(id)
+        email = buscar_email_usuario(chamado["usuario"])
+        if email:
+            # Importante: status_finalizado=False para e-mail de resposta
+            assunto, msg = montar_email_por_setor(chamado, resposta, status_finalizado=False)
+            enviar_email(email, assunto, msg)
+    except Exception as e:
+        print(f"Erro ao disparar e-mail de resposta: {e}")
 
-    if anexo_file and anexo_file.filename:
-        filename = secure_filename(anexo_file.filename)
-        setor = normalizar_setor(session['usuario'].get('setor')) or 'geral'
-        pasta_setor = os.path.join(app.config['UPLOAD_FOLDER'], setor)
-        os.makedirs(pasta_setor, exist_ok=True)
-        caminho = os.path.join(pasta_setor, filename)
-        anexo_file.save(caminho)
-        anexo_path = f"{setor}/{filename}"
-
-    db.responder_chamado_com_anexo(id, resposta, anexo_path)
     flash('Resposta enviada com sucesso!', 'success')
     return redirect(url_for('painel_admin'))
 
 @app.route('/fechar/<int:id>', methods=['POST'])
+@login_required(roles=['admin', 'superadmin'])
 def fechar_chamado_route(id):
-    if 'usuario' not in session or session['usuario']['tipo'] not in ('admin', 'superadmin'):
-        return redirect(url_for('login'))
-
-    db.fechar_chamado(id)
-    flash('Chamado fechado com sucesso!', 'info')
-    return redirect(url_for('painel_admin'))
-
-@app.route('/admin/ver/<int:id>', endpoint='visualizar_chamado')
-def visualizar_chamado(id):
-    if 'usuario' not in session or session['usuario']['tipo'] not in ('admin', 'superadmin'):
-        return redirect(url_for('login'))
-
-    chamado = db.buscar_chamado_por_id(id)
+    print(f"\n>>> INICIANDO FECHAMENTO DO CHAMADO #{id}")
+    
+    chamado = buscar_chamado_por_id(id)
     if not chamado:
-        flash("Chamado não encontrado", "danger")
         return redirect(url_for('painel_admin'))
 
-    return render_template('visualizar_chamado.html', chamado=chamado)
+    try:
+        fechar_chamado(id)
+        usuario_chamado = chamado.get("usuario")
+        email_cliente = buscar_email_usuario(usuario_chamado)
 
-# === USUÁRIOS ===
-@app.route('/admin/usuarios')
-def listar_usuarios():
-    if 'usuario' not in session or session['usuario']['tipo'] != 'superadmin':
-        return redirect(url_for('login'))
+        if email_cliente:
+            print(f">>> Email encontrado: {email_cliente}. Enviando aviso de fechamento...")
+            assunto, msg_html = montar_email_por_setor(chamado, status_finalizado=True)
+            enviar_email(email_cliente, assunto, msg_html)
+        else:
+            print(">>> AVISO: E-mail não enviado (campo vazio no banco).")
 
-    usuarios = db.consultar_usuarios_sql()
-    return render_template('usuarios.html', usuarios=usuarios, usuario=session['usuario']['login'])
+        flash(f'Chamado #{id} encerrado com sucesso!', 'success')
+        
+    except Exception as e:
+        print(f">>> EXCEÇÃO NO FECHAMENTO: {e}")
+        flash('Chamado encerrado, mas houve um erro na notificação por e-mail.', 'warning')
 
-@app.route('/admin/cadastrar_usuario', methods=['POST'])
-def cadastrar_usuario():
-    if 'usuario' not in session or session['usuario']['tipo'] != 'superadmin':
-        flash('Acesso não autorizado', 'danger')
-        return redirect(url_for('login'))
+    return redirect(url_for('painel_admin'))
 
-    login = request.form['login']
-    senha = request.form['senha']
-    tipo = request.form['tipo']
-    setor = request.form.get('setor', '')
-
-    if db.validar_login(login, senha):
-        flash('Usuário já existe', 'danger')
-    else:
-        db.cadastrar_usuario_sql(login, senha, tipo, setor)
-        flash('Usuário cadastrado com sucesso', 'success')
-
-    return redirect(url_for('listar_usuarios'))
-
-@app.route('/excluir_usuario/<login>', methods=['POST'])
-def excluir_usuario(login):
-    if 'usuario' not in session or session['usuario']['tipo'] != 'superadmin':
-        flash('Acesso negado.', 'danger')
-        return redirect(url_for('listar_usuarios'))
-
-    sucesso, msg = db.excluir_usuario_sql(login)
-    categoria = 'success' if sucesso else 'danger'
-    flash(msg, categoria)
-    return redirect(url_for('listar_usuarios'))
-
-# === DOWNLOAD DE ARQUIVO ===
-@app.route('/uploads/<path:filename>')  # <path:filename> permite subpastas
+@app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-@app.route("/dashboard")
-def dashboard():
-    status_counts = contar_chamados_por_status()
-    labels, valores = chamados_por_mes()
-
-    total = sum(status_counts.values())
-    abertos = status_counts.get("Aberto", 0)
-    respondidos = status_counts.get("Respondido", 0)
-    fechados = status_counts.get("Fechado", 0)
-
-    return render_template(
-        "dashboard.html",
-        total=total,
-        abertos=abertos,
-        respondidos=respondidos,
-        fechados=fechados,
-        labels=labels,
-        valores=valores,
-        status_counts=status_counts
-    )
-
-
-# === INICIALIZAÇÃO ===
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)

@@ -1,12 +1,10 @@
 import pyodbc
+import os
 from datetime import datetime
 from unidecode import unidecode
+from werkzeug.security import generate_password_hash, check_password_hash
 
-# === Função para normalizar setores ===
-def normalizar_setor(setor):
-    return unidecode(setor.strip().lower()) if setor else None
-
-# === CONEXÃO COM SQL SERVER ===
+# === CONFIGURAÇÃO DE CONEXÃO ===
 def conectar():
     return pyodbc.connect(
         'DRIVER={ODBC Driver 17 for SQL Server};'
@@ -15,42 +13,45 @@ def conectar():
         'Trusted_Connection=yes;'
     )
 
-# === USUÁRIOS ===
-def validar_login(usuario, senha):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT tipo FROM Usuarios WHERE login = ? AND senha = ?",
-        (usuario.strip(), senha.strip())
-    )
-    resultado = cursor.fetchone()
-    conn.close()
-    return resultado[0] if resultado else None
+def normalizar_setor(setor):
+    return unidecode(setor.strip().lower()) if setor else None
 
-def validar_login_retorna_dados(login, senha):
+# === USUÁRIOS E SEGURANÇA ===
+
+def validar_login_retorna_dados(login, senha_digitada):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT login, tipo, setor FROM Usuarios WHERE login=? AND senha=?",
-        (login.strip(), senha.strip())
+        "SELECT RTRIM(login), RTRIM(tipo), RTRIM(setor), senha FROM Usuarios WHERE RTRIM(login)=?",
+        (login.strip(),)
     )
     row = cursor.fetchone()
     conn.close()
+
     if row:
-        return {
-            'login': row[0],
-            'tipo': row[1],
-            'setor': normalizar_setor(row[2])
-        }
+        login_db, tipo_db, setor_db, senha_hash_db = row
+        if check_password_hash(senha_hash_db, senha_digitada.strip()):
+            return {
+                'login': login_db,
+                'tipo': tipo_db,
+                'setor': normalizar_setor(setor_db)
+            }
     return None
 
-def cadastrar_usuario_sql(usuario, senha, tipo="cliente", setor=None):
+def validar_login(usuario, senha):
+    dados = validar_login_retorna_dados(usuario, senha)
+    return dados['tipo'] if dados else None
+
+def cadastrar_usuario_sql(usuario, senha_plana, tipo="cliente", setor=None, email=None):
     conn = conectar()
     cursor = conn.cursor()
+    senha_com_hash = generate_password_hash(senha_plana.strip())
     try:
         cursor.execute(
-            "INSERT INTO Usuarios (login, senha, tipo, setor) VALUES (?, ?, ?, ?)",
-            (usuario.strip(), senha.strip(), tipo, normalizar_setor(setor) if tipo == "admin" else None)
+            "INSERT INTO Usuarios (login, senha, tipo, setor, email) VALUES (?, ?, ?, ?, ?)",
+            (usuario.strip(), senha_com_hash, tipo, 
+             normalizar_setor(setor) if tipo in ("admin", "superadmin") else None,
+             email.strip() if email else None)
         )
         conn.commit()
         return True, "Usuário cadastrado com sucesso."
@@ -61,27 +62,36 @@ def cadastrar_usuario_sql(usuario, senha, tipo="cliente", setor=None):
     finally:
         conn.close()
 
+def buscar_email_usuario(login):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("SELECT RTRIM(email) FROM Usuarios WHERE RTRIM(login) = ?", (login.strip(),))
+    row = cursor.fetchone()
+    conn.close()
+    return row[0] if row and row[0] else None
+
 def consultar_usuarios_sql():
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute("SELECT login, tipo FROM Usuarios ORDER BY login")
+    cursor.execute("SELECT RTRIM(login), RTRIM(tipo), RTRIM(email) FROM Usuarios ORDER BY login")
     resultados = cursor.fetchall()
     conn.close()
-    return [{"login": row[0], "tipo": row[1]} for row in resultados]
+    return [{"login": r[0], "tipo": r[1], "email": r[2]} for r in resultados]
 
 def excluir_usuario_sql(login):
     try:
         conn = conectar()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Usuarios WHERE login = ?", (login,))
+        cursor.execute("DELETE FROM Usuarios WHERE RTRIM(login) = ?", (login.strip(),))
         conn.commit()
-        return True, f"Usuário '{login}' excluído com sucesso."
+        return True, f"Usuário '{login}' excluído."
     except Exception as e:
-        return False, f"Erro ao excluir: {str(e)}"
+        return False, str(e)
     finally:
         conn.close()
 
-# === CHAMADOS ===
+# === GESTÃO DE CHAMADOS ===
+
 def salvar_chamado(titulo, setor, descricao, imagem_path, usuario):
     conn = conectar()
     cursor = conn.cursor()
@@ -92,230 +102,117 @@ def salvar_chamado(titulo, setor, descricao, imagem_path, usuario):
     conn.commit()
     conn.close()
 
-def buscar_chamados_paginados(offset=0, limite=10, status=None, setor=None):
-    conn = conectar()
-    cursor = conn.cursor()
-    query = """
-        SELECT id, titulo, usuario, setor, data_abertura, status, imagem_path, resposta
-        FROM chamados
-        WHERE 1=1
-    """
-    params = []
-
-    if status:
-        query += " AND status = ?"
-        params.append(status)
-    if setor:
-        query += " AND LOWER(REPLACE(setor, ' ', '')) = ?"
-        params.append(setor.replace(" ", "").lower())
-
-    query += " ORDER BY id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
-    params.extend([offset, limite])
-
-    cursor.execute(query, params)
-    resultados = cursor.fetchall()
-    conn.close()
-
-    return [
-        {
-            "id": r[0], "titulo": r[1], "usuario": r[2],
-            "setor": r[3], "data": r[4], "status": r[5],
-            "anexo": r[6], "resposta": r[7]
-        }
-        for r in resultados
-    ]
-
-def buscar_chamados_por_setor(setor, offset=0, limite=10, status=None):
-    return buscar_chamados_paginados(offset, limite, status, setor)
-
 def contar_total_chamados(status=None, setor=None):
     conn = conectar()
     cursor = conn.cursor()
     query = "SELECT COUNT(*) FROM Chamados WHERE 1=1"
     params = []
-
     if status:
         query += " AND status = ?"
         params.append(status)
     if setor:
-        query += " AND LTRIM(RTRIM(LOWER(setor))) = ?"
+        query += " AND setor = ?"
         params.append(normalizar_setor(setor))
-
     cursor.execute(query, params)
     total = cursor.fetchone()[0]
-    cursor.close()
     conn.close()
     return total
 
-def buscar_chamado_por_id(id):
+def buscar_chamados_paginados(offset=0, limite=10, status=None, setor=None):
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute("""
-        SELECT id, titulo, descricao, usuario, setor, data_abertura, status,
-               imagem_path, resposta, resposta_anexo
-        FROM Chamados
-        WHERE id = ?
-    """, (id,))
-    row = cursor.fetchone()
+    query = "SELECT id, titulo, RTRIM(usuario), setor, data_abertura, status, imagem_path, resposta FROM Chamados WHERE 1=1"
+    params = []
+    if status:
+        query += " AND status = ?"
+        params.append(status)
+    if setor:
+        query += " AND setor = ?"
+        params.append(normalizar_setor(setor))
+    query += " ORDER BY id DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY"
+    params.extend([offset, limite])
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
     conn.close()
-
-    if not row:
-        return None
-
-    data_formatada = "-"
-    try:
-        if isinstance(row[5], datetime):
-            data_formatada = row[5].strftime("%d/%m/%Y %H:%M")
-        elif row[5]:
-            data_convertida = datetime.fromisoformat(str(row[5]))
-            data_formatada = data_convertida.strftime("%d/%m/%Y %H:%M")
-    except:
-        data_formatada = str(row[5])
-
-    return {
-        "id": row[0],
-        "titulo": row[1] or "-",
-        "descricao": row[2] or "Sem descrição.",
-        "usuario": row[3] or "-",
-        "setor": row[4] or "-",
-        "data_abertura": data_formatada,
-        "status": row[6] or "Desconhecido",
-        "anexo": row[7],
-        "resposta": row[8] or None,
-        "resposta_anexo": row[9] or None
-    }
+    return [{
+        "id": r[0], "titulo": r[1], "usuario": r[2], "setor": r[3],
+        "data": r[4], "status": r[5], "anexo": r[6], "resposta": r[7]
+    } for r in rows]
 
 def carregar_chamados_cliente(usuario):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT id, titulo, descricao, imagem_path, data_abertura,
-               status, resposta, setor, usuario
-        FROM Chamados
-        WHERE usuario = ?
+        SELECT id, titulo, status, data_abertura 
+        FROM Chamados 
+        WHERE RTRIM(usuario) = ? 
         ORDER BY data_abertura DESC
-    """, (usuario,))
-    resultados = cursor.fetchall()
+    """, (usuario.strip(),))
+    rows = cursor.fetchall()
     conn.close()
+    return [{"id": r[0], "titulo": r[1], "status": r[2], "data": r[3]} for r in rows]
 
-    chamados = []
-    for row in resultados:
-        chamados.append({
-            "id": row[0],
-            "titulo": row[1],
-            "descricao": row[2],
-            "anexo": row[3],
-            "data": row[4].strftime("%d/%m/%Y %H:%M") if row[4] else "",
-            "status": row[5],
-            "resposta": row[6] if len(row) > 6 else "",
-            "setor": row[7] if len(row) > 7 else "",
-            "usuario": row[8] if len(row) > 8 else ""
-        })
-
-    return chamados
+def buscar_chamado_por_id(id):
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, titulo, descricao, RTRIM(usuario), setor, 
+               data_abertura, status, imagem_path, resposta 
+        FROM Chamados WHERE id = ?
+    """, (id,))
+    r = cursor.fetchone()
+    conn.close()
+    if not r: return None
+    return {
+        "id": r[0], "titulo": r[1], "descricao": r[2], "usuario": r[3],
+        "setor": r[4], "data_abertura": r[5], "status": r[6], "anexo": r[7], "resposta": r[8]
+    }
 
 def responder_chamado_com_anexo(id_chamado, resposta, anexo_path=None):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE Chamados
-        SET resposta = ?, status = 'Respondido', resposta_anexo = ?
-        WHERE id = ?
+        UPDATE Chamados SET resposta = ?, status = 'Respondido', imagem_path = COALESCE(?, imagem_path) WHERE id = ?
     """, (resposta, anexo_path, id_chamado))
     conn.commit()
     conn.close()
 
-def responder_chamado(id_chamado, resposta):
-    responder_chamado_com_anexo(id_chamado, resposta, None)
-
 def fechar_chamado(id_chamado):
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE Chamados
-        SET status = 'Fechado'
-        WHERE id = ?
-    """, (id_chamado,))
+    cursor.execute("UPDATE Chamados SET status = 'Fechado' WHERE id = ?", (id_chamado,))
     conn.commit()
     conn.close()
 
-# === NORMALIZAR SETORES ===
-def normalizar_setores_usuarios():
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute("SELECT login, setor FROM Usuarios WHERE setor IS NOT NULL")
-    usuarios = cursor.fetchall()
-
-    for login, setor in usuarios:
-        setor_normalizado = normalizar_setor(setor)
-        cursor.execute("UPDATE Usuarios SET setor = ? WHERE login = ?", (setor_normalizado, login))
-
-    conn.commit()
-    conn.close()
-    print("✅ Setores da tabela 'Usuarios' normalizados com sucesso.")
-
-def normalizar_setores_chamados():
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute("SELECT id, setor FROM Chamados WHERE setor IS NOT NULL")
-    chamados = cursor.fetchall()
-
-    for chamado_id, setor in chamados:
-        setor_normalizado = normalizar_setor(setor)
-        cursor.execute("UPDATE Chamados SET setor = ? WHERE id = ?", (setor_normalizado, chamado_id))
-
-    conn.commit()
-    conn.close()
-    print("✅ Setores da tabela 'Chamados' normalizados com sucesso.")
-
-# === DASHBOARD ===
+# === FUNÇÕES DE DASHBOARD ===
 
 def contar_chamados_por_status():
     conn = conectar()
     cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT status, COUNT(*) 
-        FROM Chamados
-        GROUP BY status
-    """)
-
+    cursor.execute("SELECT status, COUNT(*) FROM Chamados GROUP BY status")
     resultados = cursor.fetchall()
     conn.close()
+    return {status: total for status, total in resultados}
 
-    dados = {}
-    for status, total in resultados:
-        dados[status] = total
-
-    return dados
-
+def contar_chamados_por_setor():
+    conn = conectar()
+    cursor = conn.cursor()
+    cursor.execute("SELECT RTRIM(setor), COUNT(*) FROM Chamados GROUP BY setor")
+    resultados = cursor.fetchall()
+    conn.close()
+    return { (row[0] if row[0] else "Não Definido"): row[1] for row in resultados }
 
 def chamados_por_mes():
     conn = conectar()
     cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT 
-            MONTH(data_abertura) as mes,
-            COUNT(*) as total
-        FROM Chamados
-        GROUP BY MONTH(data_abertura)
+        SELECT FORMAT(data_abertura, 'MM/yyyy') as mes, COUNT(*) 
+        FROM Chamados 
+        GROUP BY FORMAT(data_abertura, 'MM/yyyy')
         ORDER BY mes
     """)
-
     resultados = cursor.fetchall()
     conn.close()
-
-    labels = []
-    valores = []
-
-    for mes, total in resultados:
-        labels.append(f"Mês {mes}")
-        valores.append(total)
-
+    labels = [r[0] for r in resultados]
+    valores = [r[1] for r in resultados]
     return labels, valores
-
-# === EXECUÇÃO LOCAL ===
-if __name__ == "__main__":
-    normalizar_setores_usuarios()
-    normalizar_setores_chamados()
