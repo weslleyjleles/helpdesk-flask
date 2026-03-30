@@ -15,6 +15,13 @@ from database.db import (
 )
 from util_email import enviar_email, montar_email_por_setor
 
+from database.db import (
+
+    buscar_anexos_do_chamado,
+    excluir_anexo_por_id  
+)
+
+
 app = Flask(__name__)
 app.secret_key = "segredo_super_seguro" 
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
@@ -96,7 +103,13 @@ def visualizar_chamado(id):
             flash("Você não tem permissão para visualizar este chamado.", "danger")
             return redirect(url_for('painel_cliente'))
 
-    return render_template('visualizar_chamado.html', chamado=chamado)
+    # --- NOVO AJUSTE AQUI ---
+    # Buscamos a lista de anexos vinculados a este ID de chamado
+    from database.db import buscar_anexos_do_chamado # Importe a função nova do db.py
+    anexos = buscar_anexos_do_chamado(id)
+    
+    # Passamos os anexos para o template
+    return render_template('visualizar_chamado.html', chamado=chamado, anexos=anexos)
 
 # === PAINÉIS ===
 
@@ -108,8 +121,23 @@ def painel_cliente():
         titulo = request.form['titulo']
         descricao = request.form['descricao']
         setor = request.form.get('setor')
-        img_path = salvar_arquivo(request.files.get('imagem'), setor)
-        salvar_chamado(titulo, setor, descricao, img_path, usuario)
+        
+        # 1. Primeiro salva o chamado e pega o ID (ajuste seu db.py para retornar o ID)
+        id_chamado = salvar_chamado(titulo, setor, descricao, None, usuario) 
+        
+        # 2. Pega a lista de arquivos (o 'multiple' no HTML envia uma lista)
+        arquivos = request.files.getlist('imagem') 
+        
+        # 3. Loop para salvar cada arquivo e registrar na nova tabela de Anexos
+        for arquivo in arquivos:
+            if arquivo and arquivo.filename != '':
+                # Usa sua função auxiliar atual para salvar o arquivo físico
+                caminho_relativo = salvar_arquivo(arquivo, setor)
+                
+                # Registra na tabela de Anexos (Passo 2 que fizemos antes)
+                from database.db import salvar_anexo_no_banco # Importe a função nova
+                salvar_anexo_no_banco(id_chamado, arquivo.filename, caminho_relativo)
+        
         flash('Chamado aberto com sucesso!', 'success')
         return redirect(url_for('painel_cliente'))
 
@@ -181,6 +209,20 @@ def excluir_usuario(login_user):
     sucesso, mensagem = excluir_usuario_sql(login_user)
     flash(mensagem, 'success' if sucesso else 'danger')
     return redirect(url_for('listar_usuarios'))
+
+@app.route('/anexo/excluir/<int:id_anexo>/<int:id_chamado>')
+@login_required(roles=['cliente', 'admin', 'superadmin'])
+def excluir_anexo_route(id_anexo, id_chamado):
+    # Opcional: Adicionar aqui uma checagem se o usuário logado é o dono do chamado
+    
+    sucesso, mensagem = excluir_anexo_por_id(id_anexo)
+    
+    if sucesso:
+        flash(mensagem, 'success')
+    else:
+        flash(mensagem, 'danger')
+        
+    return redirect(url_for('visualizar_chamado', id=id_chamado))
 
 @app.route('/responder/<int:id>', methods=['POST'])
 @login_required(roles=['admin', 'superadmin'])

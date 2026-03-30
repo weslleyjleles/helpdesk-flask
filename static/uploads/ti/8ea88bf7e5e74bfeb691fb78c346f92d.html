@@ -1,0 +1,674 @@
+<!DOCTYPE html><html class="html-container"><head><title></title><meta content="telephone=no" name="format-detection"/><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/><style>
+                            html body a {
+                               text-decoration: none;
+                            }
+                            html {
+                               font-size: 48px;
+                            }
+                            body {
+                                font-size: 16px;
+                            }
+                            body,
+                            h1,
+                            h2,
+                            h3,
+                            h4,
+                            h5,
+                            h6,
+                            hr,
+                            ol,
+                            ul,
+                            p,
+                            pre,
+                            textarea,
+                            table,
+                            tbody,
+                            tr,
+                            td {
+                                margin: 0;
+                                padding: 0;
+                            }
+                            ol,
+                            ul {
+                                list-style: none;
+                            }
+                            img {
+                                border: none;
+                            }
+                            a:link,
+                            a:visited {
+                                text-decoration: none;
+                            }
+                            a:focus {
+                                outline: none;
+                            }
+                            a:hover {
+                                text-decoration: underline;
+                            }
+                            .font-container blockquote {
+                                margin: 0 0 10px;
+                                padding: 15px 20px;
+                                background-color: #f1f2f3;
+                                border-left: 5px solid #ccc;
+                                color: #666;
+                                font-style: italic;
+                            }
+                            .font-container ol li {
+                                list-style-type: decimal;
+                                list-style-position: inside;
+                            }
+                            .font-container ul li {
+                                list-style-type: disc;
+                                list-style-position: inside;
+                            }
+                            .font-container ul {
+                                margin-left: 20px;
+                            }
+                            .font-container ol {
+                                margin-left: 20px;
+                            }
+
+                            .font-container li {
+                                text-align: left;
+                            }
+                            .root-container {
+                                margin:0 auto;
+                                width: 600px !important;
+                            }
+
+                           .unsubscribe-component .unsubscribe a {
+                                color: #999;
+                                font-size: 12px;
+                                text-decoration: none;
+                            }
+                            html body .unsubscribe-component .unsubscribe a {
+                                color: inherit !important;
+                                text-decoration: none !important;
+                                font-size: inherit !important;
+                                font-family: inherit !important;
+                                font-weight: inherit !important;
+                                line-height: inherit !important;
+                            }
+
+                            #mail-gateway-unsubscribe-no1 {
+                                max-width: 100%;
+                                margin: 0 auto;
+                                text-align: center;
+                                margin-top: 20px;
+                                margin-bottom: 20px;
+                            }
+                            #mail-gateway-unsubscribe-no1 a {
+                                color: #999;
+                                font-size: 12px;
+                                text-decoration: none;
+                            }
+
+
+                            @media screen and (min-width:321px) and (max-width:375px) {
+                                html {
+                                    font-size: 10px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media screen and (min-width:376px) and (max-width:414px) {
+                                html {
+                                    font-size: 12px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media screen and (min-width:415px) and (max-width:639px) {
+                                html {
+                                    font-size: 13px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media screen and (min-width:640px) and (max-width:719px) {
+                                html {
+                                    font-size: 14px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media screen and (min-width:719px) and (max-width:800px) {
+                                html {
+                                    font-size: 15spx;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media (device-height:480px) and (-webkit-min-device-pixel-ratio:2) {
+                                html {
+                                    font-size: 15px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media (device-height:568px) and (-webkit-min-device-pixel-ratio:2) {
+                                html {
+                                    font-size: 16px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+
+                            @media (device-height:667px) and (-webkit-min-device-pixel-ratio:2) {
+                                html {
+                                    font-size: 24px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+
+                            @media (device-height:736px) and (-webkit-min-device-pixel-ratio:2) {
+                                html {
+                                    font-size: 20px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media only screen and (device-width : 414px) and (device-height : 736px) and (-webkit-device-pixel-ratio : 3) {
+                                html {
+                                    font-size: 22px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media (device-height:812px) and (-webkit-device-pixel-ratio : 3) {
+                                html {
+                                    font-size: 22px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+                            @media (-webkit-device-pixel-ratio : 3) {
+                                html {
+                                    font-size:22px;
+                                }
+                                .root-container {
+                                    width: 100% !important;
+                                }
+                                #mail-gateway-unsubscribe-no1 {
+                                    max-width: 100%;
+                                }
+                            }
+
+                            .maidian_img{
+                                display:none;
+                            }
+
+                    </style></head><body><table class="top-center-container" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%;text-align:center"><div class="root-container" style="max-width:600px;margin:0 auto;display:inline-block"><table class="table-container" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table class="root-container" width="600" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;margin:0 auto;font-size:16px"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table class="root-container " width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;margin:0 auto;font-size:16px"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table border="0" style="width:100%;table-layout:fixed;word-break:break-all"><tbody class="preview-container" style="max-width:100%;overflow:auto"><tr><td  style =  "padding:0;padding:0;"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_block " width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;border:none"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style="width:100%;background:#ffffff;background-size:100%;background-position:100% 0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem;border:none"><table border="0" frame="void" rules="none" width="100%" style =  "padding:0;width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px">
+
+
+
+<table width='100%' border='0' frame:='void' rules='none'
+    style=" width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;">
+    <tbody>
+        <tr border='0'>
+            <td border='0'style="padding:0;margin:0;background-color:#F2F5F8" bgcolor=#F2F5F8>
+                <table width='100%' border='0' frame:='void' rules='none'
+                    style=" width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;color:#000000 !important;font-size: 14px;;margin-top: 24px;">
+                    <tbody>
+                        <tr style="width: 100%;">
+                          <td  style =  "padding:0;width:24px"></td>
+                            <td style="text-align: left;">
+                                <div style="width: 100%;height:30px">
+                                    <img height="30" style="width: auto;height:30px;"
+                                        src="https://img0.didiglobal.com/static/gstar/img/PCvaIw6JJN1705915747215.png"
+                                        alt="">
+                                </div>
+                            </td>
+                            <td style="text-align: right;font-size: 16px;color:#5c6166;">
+                                <div style="margin-bottom:6px !important"></div>
+                            </td>
+                          <td  style =  "padding:0;width:24px"></td>
+                        </tr>
+
+                        <tr>
+                          <td  style =  "padding:0;width:24px"></td>
+                            <td style="padding:40px 0 16px 0;" colspan="2">
+                              
+                                <span style="font-size: 14px;line-height:17px;color:#000000;">sex, 10 mai, 2024</span>
+                            </td>
+                          <td  style =  "padding:0;width:24px"></td>
+                        </tr>
+                        <tr>
+                          <td  style =  "padding:0;width:24px"></td>
+                            <td  style =  "padding:0;padding:0" colspan="2">
+                                <table width="96%" border="0" frame:='void' rules='none' style="table-layout: fixed;border-collapse: collapse;color:#000000 !important;">
+                                <tbody>
+                                  <tr>
+                                    <td  style =  "padding:0;padding:0;">
+                                      <strong><span style="font-size: 30px;word-break: break-word;line-height:36px;color:#000000;">Thiago, agradecemos por escolher o 99Pop</span></strong>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                          <td  style =  "padding:0;width:24px"></td>
+                        </tr>
+                        <tr>
+                           <td  style =  "padding:0;width:24px"></td>
+                            <td style="padding:10px 0 0 0" colspan="2">
+                              <table width="57%" border="0" frame:='void' rules='none' style="table-layout: fixed;border-collapse: collapse;color:#000000 !important;">
+                                <tbody>
+                                  <tr>
+                                    <td  style =  "padding:0;padding:0;">
+                                      <span style="font-size: 14px;word-break: break-word;color: rgba(10,18,26,0.70) !important;line-height:17px;"> 
+                                        <strong></strong></span>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </td>
+                           <td  style =  "padding:0;width:24px"></td>
+                        </tr>
+                                                <tr>
+                                                    <td  colspan="4" align="right" style =  "padding:0;padding:0;"><div style="height:160px"><img height="160" width="auto" src = "https://img0.didiglobal.com/static/gstar/img/GNURELvQVn1708593463233.png"/></div></td>
+                      </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+  </tbody>
+</table></div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_block " width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;border:none"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style="width:100%;background:#FCFCFC;background-size:100%;background-position:100% 0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem;border:none"><table border="0" frame="void" rules="none" width="100%" style =  "padding:0;width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table width="100%" border="0" frame="void" rules="none" class="_drow" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;background:transparent;margin-left:0px;margin-left:0rem;margin-right:0rem;padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;background-size:100%;background-position:100% 0;margin-bottom:0px;margin-Bottom:undefined"><tbody><tr><td  style =  "padding:0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem" class="row-container-td"><table width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody><tr style="vertical-align:top"><td  class="_drow_item" width="100%" border="0" style =  "padding:0;padding-left:0px;padding-right:0px"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_dcol" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px"><table width='100%' border='0' frame:='void' rules='none'
+       style="width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;background-color: #F3F4F5;">
+  <tbody>
+  <tr>
+    <td  style =  "padding:0;width:4px"></td>
+    <td style="" >
+      <table width='100%' border='0' frame:='void' rules='none'
+             style="width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;">
+        <tbody>
+
+
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td  style =  "padding:0;padding:0;">
+            <table width='100%' border='0' frame:='void' rules='none'
+                   style="width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;">
+              <tbody>
+              <tr></tr>
+              <tr>
+                <td style="padding-top: 25px;font-size: 30px;color: #000000;letter-spacing: 0;font-weight: 700;"  align="left">Total</td>
+                <td style="padding-top: 25px;font-size: 30px;color: #000000;letter-spacing: 0;font-weight: 700;"  align="right">R$14,70</td>
+              </tr>
+
+              
+               
+              
+              
+              
+              
+              
+              <tr>
+                <td colspan="2"  style="width:100%;height: 2px;border-bottom: 1px solid #F3F4F5;"></td>
+              </tr>
+              
+              <tr>
+                <td style="padding:25px 0 10px;font-weight: 500;font-size: 14px;color: #000000;word-break: break-word;line-height:14px;" align="left">Detalhes da tarifa</td>
+              </tr>
+              
+              <tr>
+                <td style="color: #5C6166;font-size: 14px;word-break: break-word;line-height:14px;padding-bottom: 8px;" align="left">Valor da corrida</td>
+                <td style="color: #5C6166;font-size: 14px;word-break: break-word;line-height:14px;padding-bottom: 8px;" align="right">
+                  R$14,70</td>
+              </tr>
+              
+              <tr>
+                <td style="color: #5C6166;font-size: 14px;word-break: break-word;line-height:14px;padding-bottom: 8px;" align="left">Duração da corrida</td>
+                <td style="color: #5C6166;font-size: 14px;word-break: break-word;line-height:14px;padding-bottom: 8px;" align="right">
+                  9min</td>
+              </tr>
+              
+
+
+              <tr>
+                <td style="padding:20px 0 10px;font-weight: 500;font-size: 14px;color: #000000;word-break: break-word;line-height:14px;" align="left">
+                  Método de pagamento
+                </td>
+              </tr>
+
+              
+              <tr>
+                <td style="padding-bottom:25px; color: #5C6166;font-size: 14px; margin-top: 10px;word-break: break-word;line-height:14px;" align="left">
+                  <span>Cartão de Crédito/Débito</span> <img width="17" height="10" style="margin-right:10px;" src="https://img0.didiglobal.com/static/cashierimg/visa_3x.png" />
+                </td>
+                <td style="padding-bottom:25px; color: #5C6166;font-size: 14px; margin-top: 10px;word-break: break-word;line-height:14px;" align="right">
+                  -R$14,70
+                </td>
+              </tr>
+
+              
+
+              
+              
+              <tr>
+                <td colspan="3" style="padding-bottom: 10px "></td>
+              </tr>
+
+              </tbody>
+            </table>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td style="padding:5px 0;height: 2px;border-bottom: 1px solid #F3F4F5;"></td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+
+        <tr>
+          <td colspan="3" style="padding-bottom:19px "></td>
+        </tr>
+
+        
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td valign="middle" style="padding: 6px 0 6px 0;">
+            <a href=%7bpay_question_link%7d style="text-decoration: none;font-size: 14px;color: #5C6166">
+            <table>
+              <tr>
+                <td  style =  "padding:0;padding:0;">
+                  <img width="16" height="16" style="margin-right:10px;" src="http://img0.didiglobal.com/static/hera_us01/0015625c-cdb0-44b0-af2e-0a70c8e1379c.png" />
+                </td>
+                <td  style =  "padding:0;padding:0;">
+                  <span style="font-size: 14px;color: #5C6166;line-height:17px">Dúvida sobre a tarifa</span>
+                </td>
+              </tr>
+            </table>
+            </a>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        
+        
+        
+        <tr>
+          <td colspan="3" style="padding-bottom: 19px "></td>
+        </tr>
+        </tbody>
+      </table>
+    </td>
+    <td  style =  "padding:0;width:4px"></td>
+  </tr>
+  <tr>
+    <td colspan="3" style="padding:10px 0 0 "></td>
+  </tr>
+  </tbody>
+</table>
+</div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table width="100%" border="0" frame="void" rules="none" class="_drow" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;background:transparent;margin-left:0px;margin-left:0rem;margin-right:0rem;padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;background-size:100%;background-position:100% 0;margin-bottom:0px;margin-Bottom:undefined"><tbody><tr><td  style =  "padding:0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem" class="row-container-td"><table width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody><tr style="vertical-align:top"><td  class="_drow_item" width="100%" border="0" style =  "padding:0;padding-left:0px;padding-right:0px"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_dcol" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px"><table width='100%' border='0' frame:='void' rules='none'
+       style="width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;background-color: #F3F4F5;">
+  <tbody>
+  <tr>
+    <td  style =  "padding:0;width:4px"></td>
+    <td  style =  "padding:0;padding:0" >
+      <table width='100%' border='0' frame:='void' rules='none'
+             style="width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;table-layout: fixed;">
+        <tbody>
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td align="left" style="font-size: 20px;
+                                            color: #000000;padding: 36px 0 30px 0;word-break: break-word;"><strong><span style="line-height:24px;">Detalhes</span></strong></td>
+          <td align="right" style="font-size: 14px;
+                                                 color: #919599;padding: 36px 0 30px 0;word-break: break-word;"><span style="line-height:17px;">9 min | 2,4 km</span></td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        </tbody>
+      </table>
+    </td>
+    <td  style =  "padding:0;width:4px"></td>
+  </tr>
+  <tr>
+    <td  style =  "padding:0;width:4px"></td>
+    <td  style =  "padding:0;padding:0" >
+      <table width='100%' border='0' frame:='void' rules='none'
+             style="table-layout:fixed;width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;">
+        <tbody>
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td colspan="2"align="left" style="font-size: 20px;
+color: #000000;padding: 0px 0 24px 0;word-break: break-word;">
+            <table width='100%' border='0' frame:='void' rules='none'
+                   style="table-layout:fixed;width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;">
+              <tr>
+                <td  style =  "padding:0;width:34px"><img width="24" height ="24" style="border-radius:50%" src="http://img0.didiglobal.com/static/hera_us01/907b798e-07e5-4202-8eaf-5cbfcb9656a6.png"/></td>
+                <td  style =  "padding:0;padding:0;">
+                  <table width='100%' border='0' frame:='void' rules='none'
+                         style="width: 100%;border-collapse: collapse;word-break: keep-all;background-color: #FFFFFF;">
+                    <tr>
+                      <td style="font-size: 14px;
+color: #000000;
+                                           letter-spacing: 0;word-break:break-word"><strong><span style="line-height:17px;">99Pop</span></strong></td>
+                    </tr>
+                    <tr>
+                      <td style="font-size: 10px;
+color: #5C6166;
+                                           letter-spacing: 0;word-break:break-word"><span style="line-height:12px;">QPD-9B10</span></td>
+                    </tr>
+                  </table>
+                </td>
+                <td  style =  "padding:0;width:34px"><img width="24" height ="24" style="border-radius:50%" src="https://s3-us01.didiglobal.com/ibt-growth-onboarding/upload/roostercut20200116/650910897384394067c4e955d24c36183ed488a5fedf5c7/35fb6d850f6ef366df5517ec586bdd136ad8aa9f?X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&amp;X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKDD00000000001DLTNCFM1CKA1M4R/20240510/uspu/s3/aws4_request&amp;X-Amz-Date=20240510T183058Z&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Expires=604800&amp;X-Amz-Signature=90e94a4a667b5b75e62706e3a3bd3f65deeafb12ea2b9e932f6b43fd82996ffb"/></td>
+                <td style="font-size: 14px;
+color: #000000;
+letter-spacing: 0;word-break:break-word">
+                  <strong><span style="line-height:17px;">CASSIO GORNATES TEIXEIRA</span></strong>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td  colspan="2" style =  "padding:0;padding:0;">
+            <div style="border-bottom:1px solid #F3F4F5"></div>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td  colspan="2" style =  "padding:0;padding:0;">
+            <table width='100%' border='0' frame:='void' rules='none'
+                   style=" width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;">
+              <tr>
+                <td  style =  "padding:0;width:18px;padding-top:30px;padding-left:4px">
+                  <div style="height: 8px; width: 8px; border-radius: 8px; background: #00CCAA;margin-top:4px">
+                  </div>
+                  <div style="margin:4px 3px 0 3px;width:2px;height:50px;background:#D4D7D9;border-radius: 2px;"></div>
+                </td>
+                <td  valign="top" style =  "padding:0;padding-top:30px">
+                  <table width='100%' border='0' frame:='void' rules='none'
+                         style=" width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;">
+                    <tr>
+                      <td  style =  "padding:0;padding:0;">
+                        <div style="font-size: 14px;
+color: #000000;
+                                  letter-spacing: 0;line-height:14px;"><strong><span style="line-height:16px;">06:16 PM</span></strong></div>
+                        <div style="font-size: 14px;
+color: #5C6166;
+                                  letter-spacing: 0;word-break:break-word;line-height:16px;"><span style="line-height:16px;">Papelaria Central</span></div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td  valign="top" style =  "padding:0;width:18px;padding-top:0;padding-left:4px">
+                  <div style="height: 8px; width: 8px; border-radius: 8px; background: #FF8040;margin-top:4px">
+                  </div>
+                </td>
+                <td valign="top" style="">
+                  <table width='100%' border='0' frame:='void' rules='none'
+                         style=" width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;">
+                    <tr>
+                      <td  style =  "padding:0;padding:0">
+                        <div style="font-size: 14px;
+color: #000000;
+                                  letter-spacing: 0;line-height:14px;"><strong><span style="line-height:16px;">06:33 PM</span></strong></div>
+                        <div style="font-size: 14px;
+color: #5C6166;
+                                  letter-spacing: 0;word-break:break-word;line-height:16px;"><span style="line-height:16px;">Rodoviária de Uberlândia</span></div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        <tr>
+          <td  style =  "padding:0;width:20px"></td>
+          <td  colspan="2" style =  "padding:0;padding-top:24px;padding-bottom:30px;">
+            <img src="http://poimap-us.didiglobal.com/mapapi/googlestaticmap?size=678x162&amp;sensor=1&amp;path=-18.919140,-48.277230%7c-18.917420,-48.281410%7c-18.910660,-48.283650%7c-18.905360,-48.284330&amp;markers=icon%3Ahttp%3A%2F%2Femail-resources.99taxis.com%2Fpin-start-map.png%7C-18.919140%2C-48.277230&amp;style=feature%3Awater%7Csaturation%3A-10&amp;markers=icon%3Ahttp%3A%2F%2Femail-resources.99taxis.com%2Fpin-end-map.png%7C-18.905324%2C-48.285191&amp;style=element%3Alabels%7Cvisibility%3Aoff&amp;product_id=30037&amp;order_id=TVRRME1UYzRPVGswTmpBMk5EYzJOams1TkE9PQ%3D%3D" style="width:100%;height:auto"/>
+          </td>
+          <td  style =  "padding:0;width:20px"></td>
+        </tr>
+        
+        
+        
+        </tbody>
+      </table>
+    </td>
+    <td  style =  "padding:0;width:4px"></td>
+  </tr>
+  </tbody>
+</table>
+</div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table width="100%" border="0" frame="void" rules="none" class="_drow" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;background:transparent;margin-left:0px;margin-left:0rem;margin-right:0rem;padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;background-size:100%;background-position:100% 0;margin-bottom:0px;margin-Bottom:undefined"><tbody><tr><td  style =  "padding:0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem" class="row-container-td"><table width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody><tr style="vertical-align:top"><td  class="_drow_item" width="100%" border="0" style =  "padding:0;padding-left:0px;padding-right:0px"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_dcol" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px">
+<table width='100%' border='0' frame:='void' rules='none'
+    style="width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;background-color: #F3F4F5;">
+  <tbody>
+    <tr>
+      <td  style =  "padding:0;width:4px"></td>
+        <td  style =  "padding:0;padding-top:30px" >
+            <table width='100%' border='0' frame:='void' rules='none'
+                style="width: 100%;border-collapse: collapse;word-break: keep-all;;table-layout: fixed;">
+                <tbody>
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td style="font-size: 20px;
+color: #000000;">
+                      <strong><span style="line-height:24px;">Preciso de mais ajuda</span></strong>
+                    </td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+                  
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td style="font-size: 14px;padding-top:24px;
+color: #5C6166;
+letter-spacing: 0;;">
+                      <a href=%7bmiss_link%7d style="text-decoration:none;color: #5C6166;"><strong><span style="line-height:17px;">Itens perdidos</span></strong><span style="padding-left:8px;color:rgba(10,18,26,0.15)"><img height="16"  style="vertical-align: text-top;" src="http://img0.didiglobal.com/static/hera_us01/40fd7f69-9ab2-4879-9ad8-c42c03a38513.png"/></span></a>
+                    </td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+                  
+                  
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td style="font-size: 14px;padding-top:24px;padding-bottom:30px;
+color: #5C6166;
+letter-spacing: 0;">
+                      <a href=%7bhelp_link%7d style="text-decoration:none;color: #5C6166;"><strong><span style="line-height:17px;">Central de Ajuda</span></strong><span style="padding-left:8px;color:rgba(10,18,26,0.15)"><img height="16"  style="vertical-align: text-top;" src="http://img0.didiglobal.com/static/hera_us01/40fd7f69-9ab2-4879-9ad8-c42c03a38513.png"/></span></a>
+                    </td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+                  
+              </tbody>
+          </table>
+      </td>
+      <td  style =  "padding:0;width:4px"></td>
+    </tr>
+  </tbody>
+</table>
+</div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table width="100%" border="0" frame="void" rules="none" class="_drow" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;background:transparent;margin-left:0px;margin-left:0rem;margin-right:0rem;padding-left:0rem;padding-right:0rem;padding-top:0rem;padding-bottom:0rem;background-size:100%;background-position:100% 0;margin-bottom:0px;margin-Bottom:undefined"><tbody><tr><td  style =  "padding:0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem" class="row-container-td"><table width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody><tr style="vertical-align:top"><td  class="_drow_item" width="100%" border="0" style =  "padding:0;padding-left:0px;padding-right:0px"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_dcol" width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style =  "padding:0;width:100%"><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px"></div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table border="0" frame="void" rules="none" width="100%" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><table class="_block " width="100%" border="0" frame="void" rules="none" style="width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all;border:none"><tbody width="100%"><tr width="100%"><td  width="100%" align="center" style="width:100%;background:#ffffff;background-size:100%;background-position:100% 0;padding-left:0px;padding-left:0rem;padding-right:0px;padding-right:0rem;padding-top:0px;padding-top:0rem;padding-bottom:0px;padding-Bottom:0rem;border:none"><table border="0" frame="void" rules="none" width="100%" style =  "padding:0;width:100%;table-layout:fixed;border-collapse:collapse;word-break:break-all"><tbody border="0"><tr border="0"><td  border="0" align="center" width="100%" style =  "padding:0;padding:0;"><div class="_dm_code" style="background:;margin-top:0px;margin-bottom:0px"><table width='100%' border='0' frame:='void' rules='none'
+    style="width: 100%;table-layout: fixed;border-collapse: collapse;word-break: keep-all;background-color: #5C6166;">
+  <tbody>
+    <tr>
+      <td  style =  "padding:0;width:4px"></td>
+        <td  style =  "padding:0;padding-top:30px;" >
+            <table width='100%' border='0' frame:='void' rules='none'
+                style="width: 100%;border-collapse: collapse;word-break: keep-all;;table-layout: fixed;">
+                <tbody>
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td colspan="2" style="font-size: 20px;
+color: #000000;">
+                      <img width="auto" height="30"src="https://img0.didiglobal.com/static/gstar/img/IfRNk9cWUh1705914961563.png" />
+                    </td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td  colspan="2" style =  "padding:0;padding:0;"><div style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.25)"></div></td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+                  <tr>
+                    <td  style =  "padding:0;width:20px"></td>
+                    <td style="font-size: 10px;
+color: #FFFFFF;padding:30px 0;
+letter-spacing: 0;">
+                      <a href=%7bfooter_law_link%7d style="text-decoration:none;color:#FFFFFF;"><strong><span style="line-height:12px;">Termos de Uso</span></strong></a>
+                    </td>
+                    <td style="font-size: 10px;padding-left:10px;
+color: #FFFFFF;
+letter-spacing: 0;">
+                      <span style="line-height:12px;">99 TECNOLOGIA LTDA</span>
+                    </td>
+                    <td  style =  "padding:0;width:20px"></td>
+                  </tr>
+              </tbody>
+          </table>
+      </td>
+      <td  style =  "padding:0;width:4px"></td>
+    </tr>
+  </tbody>
+</table></div></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></div><div><img src="" style="display: none;" /></div></td></tr></tbody></table></body></html>

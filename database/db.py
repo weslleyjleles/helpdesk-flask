@@ -1,6 +1,4 @@
 import pyodbc
-import os
-from datetime import datetime
 from unidecode import unidecode
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -21,6 +19,7 @@ def normalizar_setor(setor):
 def validar_login_retorna_dados(login, senha_digitada):
     conn = conectar()
     cursor = conn.cursor()
+    # Usamos RTRIM para evitar problemas com espaços em branco do SQL Server
     cursor.execute(
         "SELECT RTRIM(login), RTRIM(tipo), RTRIM(setor), senha FROM Usuarios WHERE RTRIM(login)=?",
         (login.strip(),)
@@ -28,19 +27,13 @@ def validar_login_retorna_dados(login, senha_digitada):
     row = cursor.fetchone()
     conn.close()
 
-    if row:
-        login_db, tipo_db, setor_db, senha_hash_db = row
-        if check_password_hash(senha_hash_db, senha_digitada.strip()):
-            return {
-                'login': login_db,
-                'tipo': tipo_db,
-                'setor': normalizar_setor(setor_db)
-            }
+    if row and check_password_hash(row[3], senha_digitada.strip()):
+        return {
+            'login': row[0],
+            'tipo': row[1],
+            'setor': normalizar_setor(row[2])
+        }
     return None
-
-def validar_login(usuario, senha):
-    dados = validar_login_retorna_dados(usuario, senha)
-    return dados['tipo'] if dados else None
 
 def cadastrar_usuario_sql(usuario, senha_plana, tipo="cliente", setor=None, email=None):
     conn = conectar()
@@ -92,16 +85,67 @@ def excluir_usuario_sql(login):
 
 # === GESTÃO DE CHAMADOS ===
 
-def salvar_chamado(titulo, setor, descricao, imagem_path, usuario):
+def salvar_chamado(titulo, setor, descricao, img_path, usuario):
+    """Salva o chamado e retorna o ID gerado para vincular anexos."""
     conn = conectar()
     cursor = conn.cursor()
-    cursor.execute("""
-        INSERT INTO Chamados (titulo, descricao, imagem_path, data_abertura, status, usuario, setor)
-        VALUES (?, ?, ?, ?, 'Aberto', ?, ?)
-    """, (titulo, descricao, imagem_path, datetime.now(), usuario, normalizar_setor(setor)))
+    query = """
+        SET NOCOUNT ON;
+        INSERT INTO Chamados (titulo, setor, descricao, imagem_path, usuario, data_abertura, status)
+        VALUES (?, ?, ?, ?, ?, GETDATE(), 'Aberto');
+        SELECT SCOPE_IDENTITY() AS id;
+    """
+    cursor.execute(query, (titulo, setor, descricao, img_path, usuario))
+    row = cursor.fetchone()
+    novo_id = row[0] if row else None
     conn.commit()
     conn.close()
+    return int(novo_id) if novo_id else None
 
+def salvar_anexo_no_banco(id_chamado, nome_arquivo, caminho_arquivo):
+    """Consolidado: Salva o registro do anexo vinculado ao chamado."""
+    conn = conectar()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            INSERT INTO Anexos (id_chamado, nome_arquivo, caminho_arquivo, data_upload)
+            VALUES (?, ?, ?, GETDATE())
+        """, (id_chamado, nome_arquivo, caminho_arquivo))
+        conn.commit()
+    except Exception as e:
+        print(f"Erro ao salvar anexo no banco: {e}")
+    finally:
+        conn.close()
+import os
+
+def excluir_anexo_por_id(id_anexo):
+    conn = conectar()
+    cursor = conn.cursor()
+    
+    # 1. Buscar o caminho do arquivo para apagar do HD
+    cursor.execute("SELECT caminho_arquivo FROM Anexos WHERE id_anexo = ?", (id_anexo,))
+    row = cursor.fetchone()
+    
+    if row:
+        caminho_arquivo = row[0]
+        # Caminho completo no Windows/Linux
+        # Ajuste o 'static' se sua pasta base for diferente
+        caminho_completo = os.path.join(os.getcwd(), caminho_arquivo)
+        
+        try:
+            # 2. Deleta o arquivo físico
+            if os.path.exists(caminho_completo):
+                os.remove(caminho_completo)
+            
+            # 3. Deleta o registro no Banco de Dados
+            cursor.execute("DELETE FROM Anexos WHERE id_anexo = ?", (id_anexo,))
+            conn.commit()
+            return True, "Anexo excluído com sucesso."
+        except Exception as e:
+            return False, f"Erro ao excluir: {e}"
+    
+    conn.close()
+    return False, "Anexo não encontrado."
 def contar_total_chamados(status=None, setor=None):
     conn = conectar()
     cursor = conn.cursor()
@@ -144,8 +188,7 @@ def carregar_chamados_cliente(usuario):
     cursor = conn.cursor()
     cursor.execute("""
         SELECT id, titulo, status, data_abertura 
-        FROM Chamados 
-        WHERE RTRIM(usuario) = ? 
+        FROM Chamados WHERE RTRIM(usuario) = ? 
         ORDER BY data_abertura DESC
     """, (usuario.strip(),))
     rows = cursor.fetchall()
@@ -168,11 +211,31 @@ def buscar_chamado_por_id(id):
         "setor": r[4], "data_abertura": r[5], "status": r[6], "anexo": r[7], "resposta": r[8]
     }
 
+def buscar_anexos_do_chamado(id_chamado):
+    conn = conectar()
+    cursor = conn.cursor()
+    
+    # ADICIONADO 'id_anexo' no SELECT
+    cursor.execute("SELECT id_anexo, nome_arquivo, caminho_arquivo FROM Anexos WHERE id_chamado = ?", (id_chamado,))
+    rows = cursor.fetchall()
+    
+    anexos = []
+    for row in rows:
+        anexos.append({
+            'id_anexo': row[0],      # <--- AGORA O JINJA VAI ENCONTRAR ESSE ATRIBUTO
+            'nome': row[1],
+            'caminho': row[2]
+        })
+    
+    conn.close()
+    return anexos
+
 def responder_chamado_com_anexo(id_chamado, resposta, anexo_path=None):
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("""
-        UPDATE Chamados SET resposta = ?, status = 'Respondido', imagem_path = COALESCE(?, imagem_path) WHERE id = ?
+        UPDATE Chamados SET resposta = ?, status = 'Respondido', imagem_path = COALESCE(?, imagem_path) 
+        WHERE id = ?
     """, (resposta, anexo_path, id_chamado))
     conn.commit()
     conn.close()
@@ -190,29 +253,26 @@ def contar_chamados_por_status():
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("SELECT status, COUNT(*) FROM Chamados GROUP BY status")
-    resultados = cursor.fetchall()
+    res = cursor.fetchall()
     conn.close()
-    return {status: total for status, total in resultados}
+    return {r[0]: r[1] for r in res}
 
 def contar_chamados_por_setor():
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("SELECT RTRIM(setor), COUNT(*) FROM Chamados GROUP BY setor")
-    resultados = cursor.fetchall()
+    res = cursor.fetchall()
     conn.close()
-    return { (row[0] if row[0] else "Não Definido"): row[1] for row in resultados }
+    return { (r[0] if r[0] else "Não Definido"): r[1] for r in res }
 
 def chamados_por_mes():
     conn = conectar()
     cursor = conn.cursor()
     cursor.execute("""
         SELECT FORMAT(data_abertura, 'MM/yyyy') as mes, COUNT(*) 
-        FROM Chamados 
-        GROUP BY FORMAT(data_abertura, 'MM/yyyy')
+        FROM Chamados GROUP BY FORMAT(data_abertura, 'MM/yyyy')
         ORDER BY mes
     """)
-    resultados = cursor.fetchall()
+    res = cursor.fetchall()
     conn.close()
-    labels = [r[0] for r in resultados]
-    valores = [r[1] for r in resultados]
-    return labels, valores
+    return [r[0] for r in res], [r[1] for r in res]
