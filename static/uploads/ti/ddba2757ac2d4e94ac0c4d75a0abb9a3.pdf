@@ -1,0 +1,369 @@
+%PDF-1.4
+1 0 obj
+<<
+/Producer (K. Nishita)
+/Author (Linx Sistemas e Consultoria LTDA)
+/CreationDate (D:20241202111522)
+/Creator (K. Nishita)
+/Keywords ()
+/Subject ()
+/Title (D-TEF - Relatório Analítico)
+/ModDate ()
+>>
+endobj
+2 0 obj
+<< /Length 3 0 R
+ >>
+stream
+BT
+/F6 10 Tf
+10 842 Td
+(                                         D-TEF - Relatório Analítico                                          ) Tj
+ET
+BT
+/F5 6 Tf
+10 832 Td
+(Empresa(s): CIA DO TERNO) Tj
+ET
+BT
+/F5 6 Tf
+10 824 Td
+(Loja(s): IPATINGA 1  CNPJ:20758306004530 Período: 02/12/2024 00:00:00 até 02/12/2024 23:59:59 ) Tj
+ET
+BT
+/F5 6 Tf
+10 816 Td
+(Rede(s): Todas Transações: Todas PDVs: Todos ) Tj
+ET
+BT
+/F5 6 Tf
+10 808 Td
+(Bandeira(s): Todas) Tj
+ET
+BT
+/F5 5 Tf
+10 800 Td
+(  Id   Emp. Loja PDV  Data     Hora     NSU    Rede           Cod.Aut     NSU Rede Cartão      Bandeira        Emissor         Transação        Pl      Valor Status   Resp.) Tj
+ET
+0 794 m
+690 794 l
+1 w
+S
+BT
+/F5 5 Tf
+10 786 Td
+(BD9B0B 0001 1050      02/12/24 03:00:19 134906 Rede                        500047352             Desconhecida    Rede            LOGON                          OK       0000) Tj
+ET
+BT
+/F5 5 Tf
+10 778 Td
+(BD9B0B 0001 1050      02/12/24 11:13:27 134910 Cielo                                             Desconhecida                    INICIALIZ                      OK       0000) Tj
+ET
+BT
+/F5 5 Tf
+10 770 Td
+(BD9B0B 0001 1050      02/12/24 11:13:48 134912 Rede                        338088766             Desconhecida                    INICIALIZ                      NAUT     0003) Tj
+ET
+BT
+/F5 6 Tf
+10 762 Td
+() Tj
+ET
+BT
+/F5 6 Tf
+10 742 Td
+(Estatísticas                       Financeiras) Tj
+ET
+BT
+/F5 6 Tf
+10 734 Td
+(Autorizadas                 0      Autorizadas                   0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 726 Td
+(Não autorizadas             0      Não autorizadas               0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 718 Td
+(Canceladas                  0      Canceladas                    0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 710 Td
+(Pendentes                   0      Pendentes                     0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 702 Td
+(Desfeitas                   0      Desfeitas                     0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 694 Td
+(Timeout                     0      Timeout                       0,00) Tj
+ET
+BT
+/F5 6 Tf
+10 686 Td
+(Não fin. aprovadas          0) Tj
+ET
+BT
+/F5 6 Tf
+10 678 Td
+(Não fin. reprovadas         1) Tj
+ET
+BT
+/F5 6 Tf
+10 670 Td
+(Não fin. canceladas         0) Tj
+ET
+BT
+/F5 6 Tf
+10 662 Td
+(Não fin. pendentes          0) Tj
+ET
+BT
+/F5 6 Tf
+10 654 Td
+(Não fin. desfeitas          0) Tj
+ET
+BT
+/F5 6 Tf
+10 646 Td
+(Não fin. timeout            0) Tj
+ET
+BT
+/F5 6 Tf
+10 638 Td
+(Cancelamentos               0) Tj
+ET
+BT
+/F5 6 Tf
+10 630 Td
+(Desfazimentos               0) Tj
+ET
+BT
+/F5 6 Tf
+10 622 Td
+(Logon/Inicialização         2) Tj
+ET
+BT
+/F5 6 Tf
+10 614 Td
+(Total                       3      Total                         0,00) Tj
+ET
+0 30 m
+690 30 l
+1 w
+S
+BT
+/F5 6 Tf
+10 20 Td
+(Linx Sistemas e Consultoria LTDA                                                          pag 1                                                                         02/12/2024 11:15) Tj
+ET
+BT
+/F5 6 Tf
+10 10 Td
+(                                                                          Relatório gerado em 0,061 segundo(s)                                                                          ) Tj
+ET
+endstream
+endobj
+3 0 obj
+3237
+endobj
+4 0 obj
+<< /Type /Outlines
+/Count 0
+>>
+endobj
+5 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F1
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+>>
+endobj
+6 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F2
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+7 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F3
+/BaseFont /Helvetica-Oblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+8 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F4
+/BaseFont /Helvetica-BoldOblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+9 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F5
+/BaseFont /Courier
+/Encoding /WinAnsiEncoding
+>>
+endobj
+10 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F6
+/BaseFont /Courier-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+11 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F7
+/BaseFont /Courier-Oblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+12 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F8
+/BaseFont /Courier-BoldOblique
+/Encoding /WinAnsiEncoding
+>>
+endobj
+13 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F9
+/BaseFont /Times-Roman
+/Encoding /WinAnsiEncoding
+>>
+endobj
+14 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F10
+/BaseFont /Times-Bold
+/Encoding /WinAnsiEncoding
+>>
+endobj
+15 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F11
+/BaseFont /Times-Italic
+/Encoding /WinAnsiEncoding
+>>
+endobj
+16 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F12
+/BaseFont /Times-BoldItalic
+/Encoding /WinAnsiEncoding
+>>
+endobj
+17 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F13
+/BaseFont /Symbol
+/Encoding /WinAnsiEncoding
+>>
+endobj
+18 0 obj
+<< /Type /Font
+/Subtype /Type1
+/Name /F14
+/BaseFont /ZapfDingbats
+/Encoding /WinAnsiEncoding
+>>
+endobj
+19 0 obj
+<< /Type /Pages
+/Kids [
+21 0 R
+]
+/Count 1
+>>
+endobj
+20 0 obj
+<< /ProcSet [ /PDF /Text /ImageC]
+/XObject << 
+>>
+/Font << 
+/F1 5 0 R 
+/F2 6 0 R 
+/F3 7 0 R 
+/F4 8 0 R 
+/F5 9 0 R 
+/F6 10 0 R 
+/F7 11 0 R 
+/F8 12 0 R 
+/F9 13 0 R 
+/F10 14 0 R 
+/F11 15 0 R 
+/F12 16 0 R 
+/F13 17 0 R 
+/F14 18 0 R 
+>>
+>>
+endobj
+21 0 obj
+<< /Type /Page
+/Parent 19 0 R
+/MediaBox [ 0 0 690 850]
+/Contents 2 0 R
+/Resources 20 0 R
+>>
+endobj
+22 0 obj
+<< /Type /Catalog
+/Pages 19 0 R
+/Outlines 4 0 R
+>>
+endobj
+xref
+0 23
+0000000000 65535 f
+0000000010 00000 n
+0000000238 00000 n
+0000003534 00000 n
+0000003557 00000 n
+0000003608 00000 n
+0000003723 00000 n
+0000003843 00000 n
+0000003966 00000 n
+0000004093 00000 n
+0000004206 00000 n
+0000004325 00000 n
+0000004447 00000 n
+0000004573 00000 n
+0000004691 00000 n
+0000004809 00000 n
+0000004929 00000 n
+0000005053 00000 n
+0000005167 00000 n
+0000005287 00000 n
+0000005356 00000 n
+0000005628 00000 n
+0000005744 00000 n
+trailer
+<< /Size 23
+/Root 22 0 R
+/Info 1 0 R
+>>
+startxref
+5817
+%%EOF

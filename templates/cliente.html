@@ -51,7 +51,6 @@
 
       <p><strong>Usuário logado:</strong> {{ usuario }}</p>
 
-      <!-- Formulário para abrir chamado -->
       <div class="card mb-4">
         <div class="card-header bg-primary text-white">Abrir novo chamado</div>
         <div class="card-body">
@@ -87,8 +86,11 @@
             </div>
 
             <div class="mb-3">
-              <label class="form-label">Anexo (opcional)</label>
-              <input type="file" name="imagem" class="form-control" />
+              <label class="form-label">Anexos (opcional)</label>
+              <input type="file" name="imagem" class="form-control" multiple />
+              <small class="text-muted"
+                >Você pode selecionar vários arquivos de uma vez.</small
+              >
             </div>
 
             <button type="submit" class="btn btn-success">
@@ -98,7 +100,6 @@
         </div>
       </div>
 
-      <!-- Lista de chamados -->
       <div class="card">
         <div class="card-header bg-secondary text-white">Meus Chamados</div>
         <div class="table-responsive">
@@ -110,7 +111,7 @@
                 <th>Setor</th>
                 <th>Data</th>
                 <th>Status</th>
-                <th>Anexo</th>
+                <th>Anexos</th>
                 <th>Resposta</th>
               </tr>
             </thead>
@@ -134,12 +135,9 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% if chamado.anexo %}
-                  <a
-                    href="{{ url_for('uploaded_file', filename=chamado.anexo|urlencode) }}"
-                    target="_blank"
-                    class="btn btn-sm btn-outline-primary"
-                    >Ver</a
+                  {% if chamado.tem_anexos %}
+                  <span class="badge rounded-pill bg-primary"
+                    >Possui arquivos</span
                   >
                   {% else %}
                   <span class="text-muted">-</span>
@@ -170,11 +168,13 @@
         );
         tooltips.forEach((t) => new bootstrap.Tooltip(t));
 
-        // Clique na linha redireciona
+        // Clique na linha redireciona, mas ignora se clicar em links de arquivos
         document.querySelectorAll(".clickable-row").forEach((row) => {
-          row.addEventListener("click", function () {
-            const url = this.getAttribute("data-url");
-            if (url) window.location.href = url;
+          row.addEventListener("click", function (e) {
+            if (e.target.tagName !== "A") {
+              const url = this.getAttribute("data-url");
+              if (url) window.location.href = url;
+            }
           });
         });
       });
